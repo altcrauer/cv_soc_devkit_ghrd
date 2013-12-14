@@ -46,6 +46,7 @@ set_global_assignment -name QIP_FILE soc_system/synthesis/soc_system.qip
 set_global_assignment -name QIP_FILE ip/altsource_probe/hps_reset.qip
 set_global_assignment -name VERILOG_FILE ip/edge_detect/altera_edge_detector.v
 set_global_assignment -name VERILOG_FILE ip/debounce/debounce.v
+set_global_assignment -name VERILOG_FILE ip/vga_serial/vga_serial.v
 set_global_assignment -name VERILOG_FILE ghrd_top.v
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name EDA_SIMULATION_TOOL "<None>"
@@ -76,6 +77,50 @@ set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_dipsw_pio[3]
 set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_button_pio[0]
 set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_button_pio[1]
 set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_clk_50
+
+
+#HSMC Stuff
+set_location_assignment PIN_B13 -to top_HC_ADC_CS_N
+set_location_assignment PIN_E6 -to top_HC_ADC_DCLK
+set_location_assignment PIN_E7 -to top_HC_ADC_DIN
+set_location_assignment PIN_D9 -to top_HC_ADC_DOUT
+set_location_assignment PIN_H15 -to top_HC_ADC_PENIRQ_N
+set_location_assignment PIN_B3 -to top_HC_VGA_DATA[9]
+set_location_assignment PIN_C3 -to top_HC_VGA_DATA[8]
+set_location_assignment PIN_B1 -to top_HC_VGA_DATA[7]
+set_location_assignment PIN_B2 -to top_HC_VGA_DATA[6]
+set_location_assignment PIN_C2 -to top_HC_VGA_DATA[5]
+set_location_assignment PIN_D2 -to top_HC_VGA_DATA[4]
+set_location_assignment PIN_D1 -to top_HC_VGA_DATA[3]
+set_location_assignment PIN_E1 -to top_HC_VGA_DATA[2]
+set_location_assignment PIN_E2 -to top_HC_VGA_DATA[1]
+set_location_assignment PIN_E3 -to top_HC_VGA_DATA[0]
+set_location_assignment PIN_AC12 -to top_HC_VGA_CLOCK
+set_location_assignment PIN_K12 -to top_HC_VGA_HS
+set_location_assignment PIN_C5 -to top_HC_VGA_VS
+set_location_assignment PIN_E4 -to top_HC_VGA_BLANK
+set_location_assignment PIN_D4 -to top_HC_VGA_SYNC
+set_location_assignment PIN_E13 -to top_HC_GREST
+set_location_assignment PIN_F13 -to top_HC_DEN
+set_location_assignment PIN_D12 -to top_HC_HD
+set_location_assignment PIN_E12 -to top_HC_VD
+set_location_assignment PIN_AJ2 -to top_HC_NCLK
+set_location_assignment PIN_F14 -to top_HC_LCD_DATA[7]
+set_location_assignment PIN_F15 -to top_HC_LCD_DATA[6]
+set_location_assignment PIN_B12 -to top_HC_LCD_DATA[5]
+set_location_assignment PIN_D10 -to top_HC_LCD_DATA[4]
+set_location_assignment PIN_D11 -to top_HC_LCD_DATA[3]
+set_location_assignment PIN_B11 -to top_HC_LCD_DATA[2]
+set_location_assignment PIN_C12 -to top_HC_LCD_DATA[1]
+set_location_assignment PIN_A13 -to top_HC_LCD_DATA[0]
+set_location_assignment PIN_G15 -to top_HC_TX_CLK
+set_location_assignment PIN_B7 -to top_HC_ETH_RESET_N
+set_location_assignment PIN_C13 -to top_HC_SCEN
+set_location_assignment PIN_G13 -to top_HC_SDA
+set_location_assignment PIN_E8 -to top_HC_PS2_DAT
+set_location_assignment PIN_AG7 -to top_HC_PS2_CLK
+
+
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to hps_can0_RX
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to hps_can0_TX
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to hps_emac1_MDC

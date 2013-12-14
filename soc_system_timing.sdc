@@ -7,6 +7,43 @@ set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reser
 set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tms]
 set_output_delay -clock altera_reserved_tck 3 [get_ports altera_reserved_tdo]
 
+## Deriving pll clocks
+derive_pll_clocks
+
+## Creating and setting variables for clock paths to make code look cleaner
+set VGA_Base_Clock |ghrd_top|clk_40
+set VGA_Clock |ghrd_top|clk_120
+
+### LCD output
+create_generated_clock -name top_HC_NCLK \
+		-source [get_pins $VGA_Clock] \
+		-divide_by 1 \
+		[get_ports top_HC_NCLK]
+
+set_output_delay -clock [get_clocks top_HC_NCLK] \
+		-max 1.500 \
+		[get_ports {top_HC_LCD_DATA* top_HC_DEN top_HC_HD top_HC_VD} ]
+
+set_output_delay -clock [get_clocks top_HC_NCLK] \
+		-min 0.7 \
+		[get_ports {top_HC_LCD_DATA* top_HC_DEN top_HC_HD top_HC_VD} ]
+
+### VGA output
+create_generated_clock -name top_HC_VGA_CLOCK \
+		-source [get_pins $VGA_Clock] \
+		-divide_by 1 \
+		[get_ports top_HC_VGA_CLOCK]
+
+set_output_delay -clock [get_clocks top_HC_VGA_CLOCK] \
+		-max 1.500 \
+		[get_ports {top_HC_VGA_DATA* top_HC_VGA_BLANK top_HC_VGA_HS top_HC_VGA_VS} ]
+
+set_output_delay -clock [get_clocks top_HC_VGA_CLOCK] \
+		-min 0.7 \
+		[get_ports {top_HC_VGA_DATA* top_HC_VGA_BLANK top_HC_VGA_HS top_HC_VGA_VS} ]
+
+
+
 # FPGA IO port constraints
 set_false_path -from [get_ports {fpga_button_pio[0]}] -to *
 set_false_path -from [get_ports {fpga_button_pio[1]}] -to *

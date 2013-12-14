@@ -1,0 +1,33 @@
+<BoardInfo>
+
+<!-- Altera UP2 PS/2 controller -->
+<DTAppend name="compatible" type="string" parentlabel="ps2_0" val="ALTR,ps2-1.0"/>
+
+<!-- LCD touch screen ads7843 controller -->
+<DTAppend name="ts@0" type="node" parentlabel="touch_panel_spi" newlabel="ts0"/>
+<DTAppend name="compatible" type="string" parentlabel="ts0" val="ti,ads7843"/>
+<DTAppend name="reg" type="number" parentlabel="ts0" val="0"/>
+<DTAppend name="spi-max-frequency" type="number" parentlabel="ts0" val="31250"/>
+<DTAppend name="interrupts" type="number" parentlabel="ts0" val="0"/>
+
+<DTAppend name="#address-cells" type="number" parentlabel="touch_panel_spi" val="1"/>
+<DTAppend name="#size-cells" type="number" parentlabel="touch_panel_spi" val="0"/>
+
+<DTAppend name="interrupt-parent" parentlabel="ts0" >
+<val type="phandle">touch_panel_pen_irq_n</val>
+</DTAppend>
+
+<DTAppend name="gpios" parentlabel="ts0" >
+<val type="phandle">touch_panel_pen_irq_n</val>
+<val type="number">0</val>
+<val type="number">1</val>
+</DTAppend>
+
+<!-- dont enable the VGA and the LCD at the same time(probobly a driver bug). -->
+<!--<DTAppend name="status" type="string" parentlabel="alt_vip_vfr_lcd" val="disabled"/> -->
+<DTAppend name="status" type="string" parentlabel="alt_vip_vfr_vga" val="disabled"/>
+
+<DTAppend name="#interrupt-cells" type="number" parentlabel="touch_panel_pen_irq_n" val="1"/>
+<DTAppend name="interrupt-controller" type="bool" parentlabel="touch_panel_pen_irq_n" val="true"/>
+
+</BoardInfo>

@@ -84,23 +84,66 @@ module ghrd_top (
 	inout  wire        hps_gpio_GPIO42,    
 	inout  wire        hps_gpio_GPIO43,    
 	inout  wire        hps_gpio_GPIO44,    
+	
+	//HSMC Stuff
+	output           top_HC_HD,
+	output           top_HC_VD,
+	output           top_HC_DEN,
+	output  [7:0]    top_HC_LCD_DATA,
+
+	output top_HC_NCLK,
+	output top_HC_GREST,
+
+	output [9:0] top_HC_VGA_DATA,
+	output top_HC_VGA_CLOCK,
+	output top_HC_VGA_HS,
+	output top_HC_VGA_VS,
+	output top_HC_VGA_BLANK,
+	output top_HC_VGA_SYNC,
+	  
+	output top_HC_ADC_CS_N,
+	output top_HC_ADC_DCLK,
+	input  top_HC_ADC_DOUT,
+	output top_HC_ADC_DIN,
+	input  top_HC_ADC_PENIRQ_N,
+	
+   output           top_HC_SCEN,
+   inout            top_HC_SDA,
+
+	input            top_HC_TX_CLK,
+	output           top_HC_ETH_RESET_N,
+
+	inout		top_HC_PS2_DAT,
+	inout		top_HC_PS2_CLK,
+
     // FPGA clock and reset
-	input  wire        fpga_clk_50                         
+	input  wire        fpga_clk_50
 );
+
+//extra connections for HSMC  
+  wire clk_120;
+  wire clk_40;
+  wire [23:0] VGA_DATA;
+  wire VGA_BLANK;
+  wire VGA_HS;
+  wire VGA_VS;
+  wire [23:0] LCD_DATA;
+  wire LCD_BLANK;
+  wire LCD_HS;
+  wire LCD_VS;
+  wire             top_SCLK_from_the_touch_panel_spi;
+  wire             top_SS_n_from_the_touch_panel_spi;
+  
+  wire top_out_port_from_the_lcd_i2c_en;
+  wire top_out_port_from_the_lcd_i2c_scl;
 
 // internal wires and registers declaration
   wire [1:0] fpga_debounced_buttons;
-  wire [3:0]  fpga_led_internal;
-  wire        hps_fpga_reset_n;
-  wire [2:0]  hps_reset_req;
-  wire        hps_cold_reset;
-  wire        hps_warm_reset;
-  wire        hps_debug_reset;
-  wire [27:0] stm_hw_events;
+  wire [3:0] fpga_led_internal;
+  wire       hps_fpga_reset_n;
 
 // connection of internal logics
   assign fpga_led_pio = fpga_led_internal;
-  assign stm_hw_events    = {{18{1'b0}}, fpga_dipsw_pio, fpga_led_internal, fpga_debounced_buttons};
 
 // SoC sub-system module
 soc_system soc_inst (
@@ -186,14 +229,46 @@ soc_system soc_inst (
   .hps_0_hps_io_hps_io_gpio_inst_GPIO41 (hps_gpio_GPIO41),  
   .hps_0_hps_io_hps_io_gpio_inst_GPIO42 (hps_gpio_GPIO42),  
   .hps_0_hps_io_hps_io_gpio_inst_GPIO43 (hps_gpio_GPIO43),  
-  .hps_0_hps_io_hps_io_gpio_inst_GPIO44 (hps_gpio_GPIO44),
-  .hps_0_f2h_stm_hw_events_stm_hwevents (stm_hw_events),  
+  .hps_0_hps_io_hps_io_gpio_inst_GPIO44 (hps_gpio_GPIO44),  
   .clk_clk                              (fpga_clk_50),
   .hps_0_h2f_reset_reset_n              (hps_fpga_reset_n),
   .reset_reset_n                        (hps_fpga_reset_n),
-  .hps_0_f2h_cold_reset_req_reset_n     (~hps_cold_reset),
-  .hps_0_f2h_warm_reset_req_reset_n     (~hps_warm_reset),
-  .hps_0_f2h_debug_reset_req_reset_n    (~hps_debug_reset)
+  
+	//LCD signals
+	.display_pll_lcd_clk_clk                                       (clk_120),                                       //                           clk_120.clk
+	.display_pll_lcd_vip_data_clk_clk                                        (clk_40),                                        //                            clk_40.clk
+
+	.alt_vip_itc_lcd_clocked_video_vid_clk                   (clk_40),                   //           alt_vip_itc_1_clocked_video.vid_clk
+	.alt_vip_itc_lcd_clocked_video_vid_data                  (LCD_DATA),                  //                                  .vid_data
+	.alt_vip_itc_lcd_clocked_video_underflow                 (),                 //                                  .underflow
+	.alt_vip_itc_lcd_clocked_video_vid_datavalid             (LCD_BLANK),             //                                  .vid_datavalid
+	.alt_vip_itc_lcd_clocked_video_vid_v_sync                (LCD_VS),                //                                  .vid_v_sync
+	.alt_vip_itc_lcd_clocked_video_vid_h_sync                (LCD_HS),                //                                  .vid_h_sync
+	.alt_vip_itc_lcd_clocked_video_vid_f                     (),                     //                                  .vid_f
+	.alt_vip_itc_lcd_clocked_video_vid_h                     (),                     //                                  .vid_h
+	.alt_vip_itc_lcd_clocked_video_vid_v                     (),                      //                                  .vid_v
+	
+	.lcd_i2c_sdat_export                         (top_HC_SDA),                         //                   lcd_i2c_sdat.export
+	.lcd_i2c_en_export                           (top_out_port_from_the_lcd_i2c_en),                           //                     lcd_i2c_en.export
+	.lcd_i2c_scl_export                          (top_out_port_from_the_lcd_i2c_scl),                           //                    lcd_i2c_scl.export
+	.ps2_0_signals_CLK                           (top_HC_PS2_CLK),                           //                  ps2_0_signals.CLK
+	.ps2_0_signals_DAT                           (top_HC_PS2_DAT),    
+	 
+	.touch_panel_spi_external_MISO               (top_HC_ADC_DOUT),               //       touch_panel_spi_external.MISO
+	.touch_panel_spi_external_MOSI               (top_HC_ADC_DIN),               //                               .MOSI
+	.touch_panel_spi_external_SCLK               (top_SCLK_from_the_touch_panel_spi),               //                               .SCLK
+	.touch_panel_spi_external_SS_n               (top_SS_n_from_the_touch_panel_spi),                //                               .SS_n
+	.touch_panel_pen_irq_n_export                (top_HC_ADC_PENIRQ_N),                //          touch_panel_pen_irq_n.export
+	
+.alt_vip_itc_vga_clocked_video_vid_clk       (clk_40),       //  alt_vip_itc_vga_clocked_video.vid_clk
+  .alt_vip_itc_vga_clocked_video_vid_data      (VGA_DATA),      //                               .vid_data
+  .alt_vip_itc_vga_clocked_video_underflow     (),     //                               .underflow
+  .alt_vip_itc_vga_clocked_video_vid_datavalid (VGA_BLANK), //                               .vid_datavalid
+  .alt_vip_itc_vga_clocked_video_vid_v_sync    (VGA_VS),    //                               .vid_v_sync
+  .alt_vip_itc_vga_clocked_video_vid_h_sync    (VGA_HS),    //                               .vid_h_sync
+  .alt_vip_itc_vga_clocked_video_vid_f         (),         //                               .vid_f
+  .alt_vip_itc_vga_clocked_video_vid_h         (),         //                               .vid_h
+  .alt_vip_itc_vga_clocked_video_vid_v         ()          //                               .vid_v
 );  
 
 // Debounce logic to clean out glitches within 1ms
@@ -208,40 +283,33 @@ debounce debounce_inst (
   defparam debounce_inst.TIMEOUT = 50000;               // at 50Mhz this is a debounce time of 1ms
   defparam debounce_inst.TIMEOUT_WIDTH = 16;            // ceil(log2(TIMEOUT))
   
-// Source/Probe megawizard instance
-hps_reset hps_reset_inst (
-  .source_clk (fpga_clk_50),
-  .source     (hps_reset_req)
-);
+  //LCD Stuff
+  wire hs3_wire;
+  wire vs3_wire;
+  assign top_HC_HD = ~hs3_wire;
+  assign top_HC_VD = ~vs3_wire;
+  vga_serial u_lcd_serial( 
+    .data(LCD_DATA), .blank(LCD_BLANK), .hs(LCD_HS), .vs(LCD_VS),
+    .clk3(clk_120), .data3(top_HC_LCD_DATA), .blank3(top_HC_DEN), .hs3(hs3_wire), .vs3(vs3_wire)
+  );
 
-altera_edge_detector pulse_cold_reset (
-  .clk       (fpga_clk_50),
-  .rst_n     (hps_fpga_reset_n),
-  .signal_in (hps_reset_req[0]),
-  .pulse_out (hps_cold_reset)
-);
-  defparam pulse_cold_reset.PULSE_EXT = 6;
-  defparam pulse_cold_reset.EDGE_TYPE = 1;
-  defparam pulse_cold_reset.IGNORE_RST_WHILE_BUSY = 1;
+  assign top_HC_GREST = 1'b1;
+  assign top_HC_NCLK = clk_120;
+  assign top_HC_SCEN = top_out_port_from_the_lcd_i2c_en;
+  assign top_HC_ADC_CS_N = top_SS_n_from_the_touch_panel_spi;
+    assign top_HC_ADC_DCLK = ~top_SS_n_from_the_touch_panel_spi ? top_SCLK_from_the_touch_panel_spi: (~top_out_port_from_the_lcd_i2c_en ? top_out_port_from_the_lcd_i2c_scl: 0);
 
-altera_edge_detector pulse_warm_reset (
-  .clk       (fpga_clk_50),
-  .rst_n     (hps_fpga_reset_n),
-  .signal_in (hps_reset_req[1]),
-  .pulse_out (hps_warm_reset)
-);
-  defparam pulse_warm_reset.PULSE_EXT = 2;
-  defparam pulse_warm_reset.EDGE_TYPE = 1;
-  defparam pulse_warm_reset.IGNORE_RST_WHILE_BUSY = 1;
   
-altera_edge_detector pulse_debug_reset (
-  .clk       (fpga_clk_50),
-  .rst_n     (hps_fpga_reset_n),
-  .signal_in (hps_reset_req[2]),
-  .pulse_out (hps_debug_reset)
-);
-  defparam pulse_debug_reset.PULSE_EXT = 32;
-  defparam pulse_debug_reset.EDGE_TYPE = 1;
-  defparam pulse_debug_reset.IGNORE_RST_WHILE_BUSY = 1;
+  //VGA stuff      
+  assign top_HC_VGA_CLOCK = clk_120;
+  assign top_HC_VGA_SYNC = 1'b1;
 
+  vga_serial u_vga_serial( 
+    .data(VGA_DATA), .blank(VGA_BLANK), .hs(VGA_HS), .vs(VGA_VS),
+    .clk3(clk_120), .data3(top_HC_VGA_DATA[9:2]), .blank3(top_HC_VGA_BLANK), .hs3(top_HC_VGA_HS), .vs3(top_HC_VGA_VS)
+  );
+  
+  //hsmc ethernet
+  assign top_HC_ETH_RESET_N = 1'b0;
+  
 endmodule
