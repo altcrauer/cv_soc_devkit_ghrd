@@ -76,6 +76,80 @@ set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_dipsw_pio[3]
 set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_button_pio[0]
 set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_button_pio[1]
 set_instance_assignment -name IO_STANDARD "1.5 V" -to fpga_clk_50
+
+
+## HSMC, HSMC connect to MTLC 
+#set_location_assignment PIN_AF9 -to CAMERA_SCLK
+#set_location_assignment PIN_AG7 -to CAMERA_SDATA
+#set_location_assignment PIN_E8 -to CAMERA_FVAL
+#set_location_assignment PIN_H14 -to CAMERA_D[0]
+#set_location_assignment PIN_D7 -to CAMERA_LVAL
+#set_location_assignment PIN_G13 -to CAMERA_D[1]
+#set_location_assignment PIN_D6 -to CAMERA_STROBE
+#set_location_assignment PIN_K12 -to CAMERA_D[2]
+#set_location_assignment PIN_C5 -to CAMERA_TRIGGER
+#set_location_assignment PIN_J12 -to CAMERA_D[3]
+#set_location_assignment PIN_E4 -to CAMERA_RESET_n
+#set_location_assignment PIN_J10 -to CAMERA_D[4]
+#set_location_assignment PIN_D4 -to GSENSOR_CS_n
+#set_location_assignment PIN_J9 -to CAMERA_D[5]
+#set_location_assignment PIN_E3 -to GSENSOR_INT1
+#set_location_assignment PIN_K7 -to CAMERA_D[6]
+#set_location_assignment PIN_E2 -to GSENSOR_INT2
+#set_location_assignment PIN_K8 -to CAMERA_D[7]
+#set_location_assignment PIN_E1 -to GSENSOR_ALT_ADDR
+#set_location_assignment PIN_G12 -to CAMERA_D[8]
+#set_location_assignment PIN_D1 -to GSENSOR_SDA_SDI_SDIO
+#set_location_assignment PIN_G11 -to CAMERA_D[9]
+#set_location_assignment PIN_D2 -to GSENSOR_SCL_SCLK
+#set_location_assignment PIN_J7 -to CAMERA_D[10]
+#set_location_assignment PIN_H7 -to CAMERA_D[11]
+#set_location_assignment PIN_AJ2 -to CAMERA_XCLKIN
+#set_location_assignment PIN_AG2 -to CAMERA_PIXCLK
+#set_location_assignment PIN_A6 -to LSENSOR_ADDR_SEL
+#set_location_assignment PIN_A5 -to LSENSOR_SCL
+#set_location_assignment PIN_C7 -to LSENSOR_SDA
+#set_location_assignment PIN_B7 -to LSENSOR_INT
+set_location_assignment PIN_B2 -to LCD_UPDN
+set_location_assignment PIN_H8 -to LCD_DITH
+set_location_assignment PIN_B1 -to LCD_RSTB
+set_location_assignment PIN_G8 -to LCD_MODE
+set_location_assignment PIN_C3 -to LCD_DE
+set_location_assignment PIN_G10 -to LCD_POWER_CTL
+set_location_assignment PIN_A4 -to LCD_B[3]
+set_location_assignment PIN_F9 -to LCD_B[7]
+set_location_assignment PIN_A3 -to LCD_B[2]
+set_location_assignment PIN_F8 -to LCD_B[6]
+set_location_assignment PIN_D5 -to LCD_B[1]
+set_location_assignment PIN_F11 -to LCD_B[5]
+set_location_assignment PIN_C4 -to LCD_B[0]
+set_location_assignment PIN_E11 -to LCD_B[4]
+set_location_assignment PIN_B6 -to LCD_G[7]
+set_location_assignment PIN_B5 -to LCD_G[6]
+set_location_assignment PIN_E9 -to LCD_G[5]
+set_location_assignment PIN_D9 -to LCD_G[4]
+set_location_assignment PIN_A9 -to LCD_R[7]
+set_location_assignment PIN_D11 -to LCD_G[3]
+set_location_assignment PIN_A8 -to LCD_R[6]
+set_location_assignment PIN_D10 -to LCD_G[2]
+set_location_assignment PIN_C8 -to LCD_R[5]
+set_location_assignment PIN_E12 -to LCD_G[1]
+set_location_assignment PIN_B8 -to LCD_R[4]
+set_location_assignment PIN_D12 -to LCD_G[0]
+set_location_assignment PIN_C10 -to LCD_R[3]
+set_location_assignment PIN_C9 -to LCD_R[2]
+set_location_assignment PIN_F13 -to LCD_DIM
+set_location_assignment PIN_B13 -to LCD_R[1]
+set_location_assignment PIN_A13 -to LCD_R[0]
+set_location_assignment PIN_B12 -to TOUCH_INT_n
+set_location_assignment PIN_C12 -to LCD_HSD
+set_location_assignment PIN_F15 -to TOUCH_I2C_SDA
+set_location_assignment PIN_B11 -to LCD_VSD
+set_location_assignment PIN_F14 -to TOUCH_I2C_SCL
+set_location_assignment PIN_E6 -to LCD_DCLK
+set_location_assignment PIN_B3 -to LCD_SHLR
+
+
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to hps_can0_RX
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to hps_can0_TX
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to hps_emac1_MDC

@@ -84,6 +84,28 @@ module ghrd_top (
 	inout  wire        hps_gpio_GPIO42,    
 	inout  wire        hps_gpio_GPIO43,    
 	inout  wire        hps_gpio_GPIO44,    
+	
+	//////////// HSMC, HSMC connect to MTLC //////////
+	//MTL
+	output		     [7:0]		LCD_B,
+	output		          		LCD_DCLK,
+	output		     [7:0]		LCD_G,
+	output		          		LCD_HSD,
+	output		          		TOUCH_I2C_SCL,
+	inout 		          		TOUCH_I2C_SDA,
+	input 		          		TOUCH_INT_n,
+	output		     [7:0]		LCD_R,
+	output		          		LCD_VSD,
+	
+	output                     LCD_DITH,
+	output                     LCD_MODE,
+	output                     LCD_POWER_CTL,
+	output                     LCD_UPDN,
+	output                     LCD_RSTB,
+	output                     LCD_DE,
+	output                     LCD_SHLR,
+	output                     LCD_DIM,
+	
     // FPGA clock and reset
 	input  wire        fpga_clk_50                         
 );
@@ -97,6 +119,28 @@ module ghrd_top (
   wire        hps_warm_reset;
   wire        hps_debug_reset;
   wire [27:0] stm_hw_events;
+  
+  wire [7:0] video_r;
+  wire [7:0] video_g;
+  wire [7:0] video_b;
+  wire       video_clk;
+  wire       video_hs;
+  wire       video_vs;
+
+  assign LCD_MODE = 1'b0;  //HSD/VSD mode
+  assign LCD_RSTB = 1'b1; //NO RESET
+  assign LCD_DIM  = 1'b1;
+  assign LCD_POWER_CTL = 1'b1;
+  assign LCD_SHLR  	= 1'b1;
+  assign LCD_UPDN 	= 1'b0;
+  
+  // MTL - display
+  assign {LCD_R,LCD_G,LCD_B} = {video_r, video_g, video_b};
+  assign LCD_DCLK = video_clk;
+  assign LCD_HSD = ~video_hs;
+  assign LCD_VSD = ~video_vs;
+
+
 
 // connection of internal logics
   assign fpga_led_pio = fpga_led_internal;
@@ -193,7 +237,22 @@ soc_system soc_inst (
   .reset_reset_n                        (hps_fpga_reset_n),
   .hps_0_f2h_cold_reset_req_reset_n     (~hps_cold_reset),
   .hps_0_f2h_warm_reset_req_reset_n     (~hps_warm_reset),
-  .hps_0_f2h_debug_reset_req_reset_n    (~hps_debug_reset)
+  .hps_0_f2h_debug_reset_req_reset_n    (~hps_debug_reset),
+  
+  .alt_vip_itc_0_clocked_video_vid_clk           (video_clk),                      //    alt_vip_itc_0_clocked_video.vid_clk
+  .alt_vip_itc_0_clocked_video_vid_data          ({video_r, video_g, video_b}),                     //                               .vid_data
+  .alt_vip_itc_0_clocked_video_underflow         (),                    //                               .underflow
+  .alt_vip_itc_0_clocked_video_vid_datavalid     (),                //                               .vid_datavalid
+  .alt_vip_itc_0_clocked_video_vid_v_sync        (video_vs),                   //                               .vid_v_sync
+  .alt_vip_itc_0_clocked_video_vid_h_sync        (video_hs),                   //                               .vid_h_sync
+  .alt_vip_itc_0_clocked_video_vid_f             (),                        //                               .vid_f
+  .alt_vip_itc_0_clocked_video_vid_h             (),                        //                               .vid_h
+  .alt_vip_itc_0_clocked_video_vid_v             (),                        //                               .vid_v
+  //.multi_touch_conduit_end_I2C_SDA               (TOUCH_I2C_SDA),                          //        multi_touch_conduit_end.I2C_SDA
+  //.multi_touch_conduit_end_I2C_SCL               (TOUCH_I2C_SCL),                          //                               .I2C_SCL
+  //.multi_touch_conduit_end_INT_n                 (TOUCH_INT_n),                            //                               .INT_n
+  
+  .video_pll_clk33_clk                                    (video_clk)
 );  
 
 // Debounce logic to clean out glitches within 1ms
