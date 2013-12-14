@@ -54,6 +54,14 @@
          type = "int";
       }
    }
+   element alt_vip_vfr_0.avalon_slave
+   {
+      datum baseAddress
+      {
+         value = "393216";
+         type = "String";
+      }
+   }
    element button_pio
    {
       datum _sortIndex
@@ -542,7 +550,7 @@
   <parameter name="BSEL" value="1" />
   <parameter name="CSEL_EN" value="false" />
   <parameter name="CSEL" value="0" />
-  <parameter name="F2S_Width" value="2" />
+  <parameter name="F2S_Width" value="3" />
   <parameter name="S2F_Width" value="2" />
   <parameter name="LWH2F_Enable" value="true" />
   <parameter name="F2SDRAM_Type" value="" />
@@ -685,7 +693,7 @@
  <module
    kind="altera_jtag_avalon_master"
    version="13.1"
-   enabled="1"
+   enabled="0"
    name="hps_only_master">
   <parameter name="USE_PLI" value="0" />
   <parameter name="PLI_PORT" value="50000" />
@@ -856,7 +864,7 @@
   <parameter name="FIELD0_ANC_LINE" value="0" />
   <parameter name="AUTO_IS_CLK_RST_CLOCK_RATE" value="50000000" />
  </module>
- <module kind="alt_vip_cpr" version="13.1" enabled="0" name="alt_vip_cpr_0">
+ <module kind="alt_vip_cpr" version="13.1" enabled="1" name="alt_vip_cpr_0">
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="DIN1_ENABLED" value="0" />
   <parameter name="DOUT1_SYMBOLS_PER_BEAT" value="0" />
@@ -866,13 +874,13 @@
   <parameter name="DIN0_SYMBOLS_PER_BEAT" value="4" />
   <parameter name="DIN1_SYMBOLS_PER_BEAT" value="0" />
  </module>
- <module kind="alt_vip_tpg" version="13.1" enabled="1" name="alt_vip_tpg_0">
+ <module kind="alt_vip_tpg" version="13.1" enabled="0" name="alt_vip_tpg_0">
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="CHANNELS_IN_PAR" value="3" />
   <parameter name="CTRL_INTERFACE_DEPTH" value="10" />
   <parameter name="PARAMETERISATION"><![CDATA[<testPatternGeneratorParams><TPG_NAME>MyPatternGenerator</TPG_NAME><TPG_RUNTIME_CONTROL>0</TPG_RUNTIME_CONTROL><TPG_BPS>8</TPG_BPS><TPG_MAX_WIDTH>800</TPG_MAX_WIDTH><TPG_MAX_HEIGHT>480</TPG_MAX_HEIGHT><TPG_COLORSPACE>COLORSPACE_RGB</TPG_COLORSPACE><TPG_FORMAT>SAMPLE_444</TPG_FORMAT><TPG_INTERLACE>PROGRESSIVE_FRAMES</TPG_INTERLACE><TPG_PARALLEL_MODE>true</TPG_PARALLEL_MODE><TPG_PATTERN>TPG_PATTERN_COLORBARS</TPG_PATTERN><TPG_UNIFORM_VAL_C1>128</TPG_UNIFORM_VAL_C1><TPG_UNIFORM_VAL_C2>128</TPG_UNIFORM_VAL_C2><TPG_UNIFORM_VAL_C3>128</TPG_UNIFORM_VAL_C3></testPatternGeneratorParams>]]></parameter>
  </module>
- <module kind="alt_vip_vfr" version="13.1" enabled="0" name="alt_vip_vfr_0">
+ <module kind="alt_vip_vfr" version="13.1" enabled="1" name="alt_vip_vfr_0">
   <parameter name="FAMILY" value="Cyclone V" />
   <parameter name="BITS_PER_PIXEL_PER_COLOR_PLANE" value="8" />
   <parameter name="NUMBER_OF_CHANNELS_IN_PARALLEL" value="4" />
@@ -881,10 +889,10 @@
   <parameter name="MAX_IMAGE_HEIGHT" value="480" />
   <parameter name="MEM_PORT_WIDTH" value="128" />
   <parameter name="RMASTER_FIFO_DEPTH" value="1024" />
-  <parameter name="RMASTER_BURST_TARGET" value="32" />
+  <parameter name="RMASTER_BURST_TARGET" value="16" />
   <parameter name="CLOCKS_ARE_SEPARATE" value="1" />
-  <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="-1" />
-  <parameter name="AUTO_CLOCK_MASTER_CLOCK_RATE" value="-1" />
+  <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="50000000" />
+  <parameter name="AUTO_CLOCK_MASTER_CLOCK_RATE" value="50000000" />
  </module>
  <module kind="altera_pll" version="13.1" enabled="1" name="video_pll">
   <parameter name="debug_print_output" value="false" />
@@ -1344,11 +1352,6 @@
    version="13.1"
    start="clk_0.clk_reset"
    end="onchip_memory2_0.reset1" />
- <connection
-   kind="avalon_streaming"
-   version="13.1"
-   start="alt_vip_tpg_0.dout"
-   end="alt_vip_itc_0.din" />
  <connection kind="clock" version="13.1" start="clk_0.clk" end="video_pll.refclk" />
  <connection
    kind="reset"
@@ -1375,6 +1378,64 @@
    version="13.1"
    start="clk_0.clk_reset"
    end="alt_vip_itc_0.is_clk_rst_reset" />
+ <connection
+   kind="avalon_streaming"
+   version="13.1"
+   start="alt_vip_cpr_0.dout0"
+   end="alt_vip_itc_0.din" />
+ <connection
+   kind="avalon_streaming"
+   version="13.1"
+   start="alt_vip_vfr_0.avalon_streaming_source"
+   end="alt_vip_cpr_0.din0" />
+ <connection
+   kind="clock"
+   version="13.1"
+   start="clk_0.clk"
+   end="alt_vip_cpr_0.clock" />
+ <connection
+   kind="reset"
+   version="13.1"
+   start="clk_0.clk_reset"
+   end="alt_vip_cpr_0.reset" />
+ <connection
+   kind="clock"
+   version="13.1"
+   start="clk_0.clk"
+   end="alt_vip_vfr_0.clock_reset" />
+ <connection
+   kind="reset"
+   version="13.1"
+   start="clk_0.clk_reset"
+   end="alt_vip_vfr_0.clock_reset_reset" />
+ <connection
+   kind="clock"
+   version="13.1"
+   start="clk_0.clk"
+   end="alt_vip_vfr_0.clock_master" />
+ <connection
+   kind="reset"
+   version="13.1"
+   start="clk_0.clk_reset"
+   end="alt_vip_vfr_0.clock_master_reset" />
+ <connection
+   kind="avalon"
+   version="13.1"
+   start="alt_vip_vfr_0.avalon_master"
+   end="hps_0.f2h_axi_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="13.1"
+   start="hps_0.h2f_lw_axi_master"
+   end="alt_vip_vfr_0.avalon_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00060000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="0" />
  <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="false" />
