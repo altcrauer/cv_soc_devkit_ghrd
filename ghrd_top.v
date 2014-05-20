@@ -85,6 +85,24 @@ module ghrd_top (
 	inout  wire        hps_gpio_GPIO43,    
 	inout  wire        hps_gpio_GPIO44,    
 	
+	//fpga ddr3 memory
+	output wire [14:0] fpga_memory_mem_a,
+	output wire [2:0] fpga_memory_mem_ba,
+	output wire fpga_memory_mem_ck,
+	output wire fpga_memory_mem_ck_n,
+	output wire fpga_memory_mem_cke,
+	output wire fpga_memory_mem_cs_n,
+	output wire [1:0] fpga_memory_mem_dm,
+	output wire fpga_memory_mem_ras_n,
+	output wire fpga_memory_mem_cas_n,
+	output wire fpga_memory_mem_we_n,
+	output wire fpga_memory_mem_reset_n,
+	inout wire [15:0] fpga_memory_mem_dq,
+	inout wire [1:0] fpga_memory_mem_dqs,
+	inout wire [1:0] fpga_memory_mem_dqs_n,
+	output wire fpga_memory_mem_odt,
+	input wire fpga_memory_oct_rzqin,
+	
 	//HSMC Stuff
 	output           top_HC_HD,
 	output           top_HC_VD,
@@ -234,6 +252,24 @@ soc_system soc_inst (
   .hps_0_h2f_reset_reset_n              (hps_fpga_reset_n),
   .reset_reset_n                        (hps_fpga_reset_n),
   
+	//FPGA DDR3 memory stuff
+	.fpga_memory_mem_a                   (fpga_memory_mem_a),
+	.fpga_memory_mem_ba                  (fpga_memory_mem_ba),
+	.fpga_memory_mem_ck                  (fpga_memory_mem_ck),
+	.fpga_memory_mem_ck_n                (fpga_memory_mem_ck_n),
+	.fpga_memory_mem_cke                 (fpga_memory_mem_cke),
+	.fpga_memory_mem_cs_n                (fpga_memory_mem_cs_n),
+	.fpga_memory_mem_dm                  (fpga_memory_mem_dm),
+	.fpga_memory_mem_ras_n               (fpga_memory_mem_ras_n),
+	.fpga_memory_mem_cas_n               (fpga_memory_mem_cas_n),
+	.fpga_memory_mem_we_n                (fpga_memory_mem_we_n),
+	.fpga_memory_mem_reset_n             (fpga_memory_mem_reset_n),
+	.fpga_memory_mem_dq                  (fpga_memory_mem_dq),
+	.fpga_memory_mem_dqs                 (fpga_memory_mem_dqs),
+	.fpga_memory_mem_dqs_n               (fpga_memory_mem_dqs_n),
+	.fpga_memory_mem_odt                 (fpga_memory_mem_odt),
+	.fpga_memory_oct_rzqin               (fpga_memory_oct_rzqin),
+	
 	//LCD signals
 	.display_pll_lcd_clk_clk                                       (clk_120),                                       //                           clk_120.clk
 	.display_pll_lcd_vip_data_clk_clk                                        (clk_40),                                        //                            clk_40.clk

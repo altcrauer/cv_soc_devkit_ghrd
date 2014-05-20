@@ -12,7 +12,7 @@
 # 
 # request TCL package from ACDS 13.0
 # 
-package require -exact qsys 13.0
+package require -exact qsys 12.1
 
 
 # 
@@ -46,25 +46,6 @@ set_fileset_property SIM_VERILOG TOP_LEVEL intr_capturer
 set_fileset_property SIM_VERILOG ENABLE_RELATIVE_INCLUDE_PATHS false
 add_fileset_file intr_capturer.v VERILOG PATH intr_capturer.v
 
-add_fileset SIM_VHDL SIM_VHDL vhdl_from_verilog
-set_fileset_property SIM_VHDL top_level intr_capturer
-
-proc vhdl_from_verilog { outputName } {
-    set fileloc [create_temp_file simgen_init.txt]
-    send_message info ${fileloc}
-    set fileHandle [ open  ${fileloc} w ]
-    puts ${fileHandle} "DECLARE_VHDL_COMPONENT=timmy\n"
-    close ${fileHandle}
-
-    set SIMGEN_PARAMS "--simgen_parameter=CBX_HDL_LANGUAGE=VHDL,SIMGEN_RAND_POWERUP_FFS=OFF,SIMGEN_OBFUSCATE=OFF,SIMGEN_MAX_TULIP_COUNT=0,SIMGEN_INITIALIZATION_FILE=${fileloc},SIMGEN_VHDL_LIBRARY_LIST=work"
-
-    set foo [call_simgen intr_capturer.v "$SIMGEN_PARAMS --simgen_arbitrary_blackbox=+timmy" ]
-    set foo "${foo}.vho"
-    #set foo [simgen_file bob.v bob VHDL {tom.v timmy.v} +timmy ${fileloc} work ]
-
-    add_fileset_file intr_capturer.vho VHDL PATH ${foo}
-    #add_fileset_file timmy.vhd VHDL PATH timmy.vhd
-}
 
 # 
 # parameters

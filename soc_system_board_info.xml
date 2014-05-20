@@ -66,9 +66,10 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <DTAppend name="clock-names" type="string" parentlabel="hps_0_gmac1" val="stmmaceth"/>
 <DTAppend name="clocks" type="phandle" parentlabel="hps_0_gmac1" val="emac1_clk"/>
 
+<DTAppend name="snps,phy-addr" type="hex" parentlabel="hps_0_gmac1" val="0xffffffff"/>
 <DTAppend name="phy-addr" type="hex" parentlabel="hps_0_gmac1" val="0xffffffff"/>
-<DTAppend name="micrel-ksz9021rlrn-clk-skew" type="hex" parentlabel="hps_0_gmac1" val="0xa0e0"/>
-<DTAppend name="micrel-ksz9021rlrn-rx-skew" type="hex" parentlabel="hps_0_gmac1" val="0x0"/>
+<DTAppend name="txc-skew-ps" type="hex" parentlabel="hps_0_gmac1" val="2600"/>
+<DTAppend name="rxc-skew-ps" type="hex" parentlabel="hps_0_gmac1" val="2000"/>
 
 <DTAppend name="status" type="string" parentlabel="hps_0_gmac0" val="disabled"/>
 <DTAppend name="status" type="string" parentlabel="hps_0_uart1" val="disabled"/>
@@ -76,14 +77,17 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <DTAppend name="status" type="string" parentlabel="hps_0_nand0" val="disabled"/>
 <DTAppend name="clocks" type="phandle" parentlabel="hps_0_nand0" val="nand_clk"/>
 
+
 <I2CBus master="hps_0_i2c0">
 	<I2CChip addr="0x28" label="lcd" name="newhaven,nhd-0216k3z-nsw-bbw"></I2CChip>
 	<I2CChip addr="0x51" label="eeprom" name="atmel,24c32"></I2CChip>
+	<I2CChip addr="0x68" label="rtc" name="dallas,ds1339"></I2CChip>
 </I2CBus>
 <DTAppend name="height" type="number" parentlabel="lcd" val="2"/>
 <DTAppend name="width" type="number" parentlabel="lcd" val="16"/>
 <DTAppend name="brightness" type="number" parentlabel="lcd" val="8"/>
 <DTAppend name="pagesize" type="number" parentlabel="eeprom" val="32"/>
+
 <DTAppend name="clocks"  parentlabel="hps_0_sdmmc" >
 <val type="phandle">l4_mp_clk</val>
 <val type="phandle">sdmmc_clk</val>
@@ -264,29 +268,6 @@ of the Linux kernel.  One typically executes sopc2dts as follows:
 <DTAppend name="compatible" type="string" parentlabel="fpgabridge2" val="altr,socfpga-fpga2hps-bridge"/>
 <DTAppend name="label" type="string" parentlabel="fpgabridge2" val="fpga2hps"/>
 <DTAppend name="clocks" type="phandle" parentlabel="fpgabridge2" val="l4_main_clk"/>
-
-<DTAppend name="l3regs@0xff800000" type="node" parentlabel="sopc0" newlabel="l3regs"/>
-<DTAppend name="compatible"  parentlabel="l3regs" >
-<val type="string">altr,l3regs</val>
-<val type="string">syscon</val>
-</DTAppend>
-<DTAppend name="reg"  parentlabel="l3regs" >
-<val type="hex">0xff800000</val>
-<val type="hex">0x1000</val>
-</DTAppend>
-
-
-<DTAppend name="sdrctl@0xffc25000" type="node" parentlabel="sopc0" newlabel="sdctrl"/>
-<DTAppend name="compatible"  parentlabel="sdctrl" >
-<val type="string">altr,sdr-ctl</val>
-<val type="string">syscon</val>
-</DTAppend>
-<DTAppend name="reg"  parentlabel="sdctrl" >
-<val type="hex">0xffc25000</val>
-<val type="hex">0x1000</val>
-</DTAppend>
-
-
 
 <Chosen>
         <Bootargs val="console=ttyS0,115200"></Bootargs>

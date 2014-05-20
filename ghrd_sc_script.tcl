@@ -8,7 +8,6 @@ set uart_base 0x10100
 set intr_capture_base 0x30000
 set juart_base 0x20000
 set onchip_mem_base 0x0
-set hps_led_base 0xff709000
 
 set uart_int_bit 3
 set dipsw_int_bit 0
@@ -21,33 +20,18 @@ set juart_int_bit 2
 #set mj [get_service_paths master]
 
 # if system has multiple masters, dedicated master to be in variable
-# so to know that return master service path with phy_0 is an non-secure jtag master,
-# phy_1 is an secure jtag master in design, and phy_2 is JTAG master attached to SGDMA
-
-set all_sp [get_service_paths master]
-#puts "all ser.path: $all_sp"
-puts "llength of all_sp: [ llength $all_sp ]"
-for {set i 0} {$i<[llength $all_sp]} {incr i} {
-  set sp($i) [lindex [get_service_paths master] $i]
-  #puts $sp($i)
-
-  if {[ regexp {/5CS.+/phy_1/} "$sp($i)" ]} {
-    #set result [ regexp {/phy_1/} "$sp($i)" ]
-    #puts "matched /phy_0/: $result"
-    set mj_nsec "$sp($i)"
-    puts "non-secure jtag master: $mj_nsec"
-    open_service master $mj_nsec
-    }
-
-  if {[ regexp {/5CS.+/phy_0/} "$sp($i)" ]} {
-    #set result [ regexp {/phy_0/} "$sp($i)" ]
-    #puts "matched /phy_1/: $result"
-    set mj_secu "$sp($i)"
-    puts "secure jtag master    : $mj_secu"
-    open_service master $mj_secu
-    }
-  }
+# so to know that return master service path with index 0 is an non-secure jtag master,
+# and index 1 is an secure jtag master in design
  
+set mj_nsec [lindex [get_service_paths master] 0]
+open_service master $mj_nsec
+
+set mj_secu [lindex [get_service_paths master] 1]
+open_service master $mj_secu
+
+# display back the variable name
+puts "non-secure jtag master: $mj_nsec"
+puts "secure jtag master    : $mj_secu"
 
 set ser_path [get_service_paths monitor]
 set mon_path [claim_service monitor $ser_path "my_lib" ""]
@@ -468,39 +452,6 @@ proc uart_intr_disable {} {
   global mj_nsec
   global uart_base
   regwr [ expr $uart_base+12 ] 0x0
-}
-
-# procedure that light on HPS GPIO LED base on 4-bit hexadecimal value written
-proc hps_led_on {pattern} {
-  global mj_secu
-  global hps_led_base
-  set wr_en [secrd [ expr $hps_led_base + 4] ]
-  secwr [ expr $hps_led_base + 4] 0x0000f000
-  secwr [ expr $hps_led_base ] [ expr $pattern<<12 ]
-}
-
-# procedure that light off the 4 HPS GPIO LEDs. Value '1' at GPIO will turn off the lighting
-proc hps_led_off {} {
-  global mj_secu
-  global hps_led_base
-  secwr [ expr $hps_led_base ] 0x0000f000
-}
-
-# procedure set HPS LED to run in single light-on pattern, with an interval set by user
-proc hps_led_run {interval occurance} {
-  global mj_secu
-  global hps_led_base
-  secwr [ expr $hps_led_base + 4] 0x0000f000
-  for {set y 0} {$y<$occurance} {incr y} {
-    set value 1    
-    for {set x 0} {$x<4} {incr x} {
-      set dvalue [expr ~$value]
-      secwr $hps_led_base [expr $dvalue<<12 ]
-      puts " value of LED GPIO register~: 0b [int2bits $value]"
-      set value [expr $value <<1 ]
-      after $interval
-    }
-  }
 }
 
 ######################### information #################################
